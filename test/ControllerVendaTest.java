@@ -22,7 +22,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
+D
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ControllerVendaTest {
