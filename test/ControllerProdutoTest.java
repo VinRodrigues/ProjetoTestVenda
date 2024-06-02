@@ -7,7 +7,7 @@ import static org.junit.Assert.assertNull;
 
 /**
  *
- * @author giova
+ * @author ian21
  */
 public class ControllerProdutoTest {
     private Produto produto;

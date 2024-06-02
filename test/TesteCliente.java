@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNull;
 
 /**
  *
- * @author giova
+ * @author vinicius
  */
 public class TesteCliente {
     private ClientePF pessoa;
