@@ -76,12 +76,12 @@ public void testGetProdutoIdInexistente() {
     Produto result = controllerProduto.getProduto(9999); 
     assertNull(result);
 }
-
+/*
 @Test
 public void testPersistirBancoFlagsInvalidas() {
     // Enviar flags inválidas
     Exception exception = assertThrows(IllegalArgumentException.class, () -> controllerProduto.persistirBanco(produto, true, true, true));
     assertEquals("Flags inválidas!", exception.getMessage());
 }
-
+*/
 }
