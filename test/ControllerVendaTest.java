@@ -83,7 +83,7 @@ public class ControllerVendaTest {
         
         // Inserir vendas para teste
         controllerVenda.persistirBanco(venda);
-        controllerVenda.persistirBanco(new Venda(10, new java.util.Date(), new ClientePF(), 10.0f, 20.0f));
+        controllerVenda.persistirBanco(new Venda(10, dataNascimento, clientePF, 10.0f, 20.0f));
 
         ArrayList<Venda> vendas = controllerVenda.getVendas();
         // Lista não vazia
