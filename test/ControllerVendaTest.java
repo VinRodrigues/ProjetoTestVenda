@@ -42,7 +42,7 @@ public class ControllerVendaTest {
         clienteController.persistirBanco(clientePF, true, false, false);
 
         Produto produto = new Produto(5, "Produto Teste", (float) 3.0);
-        produtoController.persistBanco(produto, true, false, false);
+        produtoController.persistirBanco(produto, true, false, false);
 
         VendaItem vendaItem = new VendaItem(7, 1, (float) 3.0);
         vendaItem.setProduto(produto);
