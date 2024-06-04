@@ -1,124 +1,117 @@
-/*
-import Controller.ControllerCliente;
-import Controller.ControllerProduto;
-import Controller.ControllerVenda;
-import Model.ClienteCompra;
-import Model.ItemVendido;
-import Model.Venda;
-import Model.ClientePF;
+import Controller.*;
+import Model.*;
 import Model.DAO.DAOConexaoDB;
-import Model.DAO.DAOVenda;
-import Model.Produto;
-import Model.VendaItem;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import org.junit.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import static org.junit.jupiter.api.Assertions.*;
+/**
+ *
+ * @author ian21
+ */
 
 public class ControllerVendaTest {
 
-         private ControllerVenda vendaController = new ControllerVenda();
-    private Venda vendaTest;
-    private ControllerProduto produtoController = new ControllerProduto();
-    private ControllerCliente clienteController = new ControllerCliente();
+    private ControllerVenda controllerVenda;
+    private Venda venda;
+    private ControllerProduto produtoController;
+    private ControllerCliente clienteController;
 
     @Before
-    public void prepararTeste() {
-        limparBancoDados();
+    public void setUp() throws SQLException {
+        
+        // Limpar banco antes de cada teste
+        limparBD();
 
+        // Criando informações necessárias para funcionamento do teste
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2002, Calendar.MAY, 30);
+        calendar.set(2001, Calendar.JUNE, 21);
+        ClientePF clientePF = new ClientePF(9, calendar.getTime(), "Pessoa Teste", "22119051052", 109283745);
+        clienteController.persistirBanco(clientePF, true, false, false);
 
-        ClientePF clienteTeste = new ClientePF(6, calendar.getTime(), "Cliente Teste", "12345678912", 123456789);
-        clienteController.persistirBanco(clienteTeste, true, false, false);
+        Produto produto = new Produto(5, "Produto Teste", (float) 3.0);
+        produtoController.persistBanco(produto, true, false, false);
 
-        Produto produtoTeste = new Produto(5, "Produto Teste", (float) 6.0);
-        produtoController.persistirBanco(produtoTeste, true, false, false);
+        VendaItem vendaItem = new VendaItem(7, 1, (float) 3.0);
+        vendaItem.setProduto(produto);
 
-        vendaTest = new Venda(5, calendar.getTime(), clienteTeste, (float) 1.0, (float) 15.0);
-        vendaTest.adicionaItem(produtoTeste, 3);
+        venda = new Venda(5, calendar.getTime(), clientePF, (float) 2.0, (float) 10.0);
+        venda.adicionaItem(vendaItem);
     }
 
-    @Test
-    public void persistirVendaNoBancoTest() {
-        vendaController.persistirBanco(vendaTest);
+    private void limparBD() throws SQLException {
+        
+        DAOConexaoDB conexaoDB = new DAOConexaoDB();
+        Connection connection = conexaoDB.getConexao();
 
-        Venda vendaPersistida = getVendaById(vendaController.getVendas(), vendaTest.getIdVenda());
-
-        assertNotNull(vendaPersistida);
-        assertEquals(vendaTest.getCliente().getNome(), vendaPersistida.getCliente().getNome());
-        assertEquals(vendaTest.getValorPago(), vendaPersistida.getValorPago(), 0.001);
-        assertEquals(vendaTest.getTotalVendaLiquida(), vendaPersistida.getTotalVendaLiquida(), 0.001);
-    }
-
-    @Test
-    public void deletarVendaDoBancoTest() {
-        vendaController.persistirBanco(vendaTest);
-
-        Venda vendaPersistida = getVendaById(vendaController.getVendas(), vendaTest.getIdVenda());
-        assertNotNull(vendaPersistida);
-
-        vendaController.deletarVendaDoBanco(vendaPersistida);
-
-        Venda vendaDeletada = getVendaById(vendaController.getVendas(), vendaTest.getIdVenda());
-        assertNull(vendaDeletada);
-    }
-
-    @Test
-    public void atualizarVendaNoBancoTest() {
-        vendaController.persistirBanco(vendaTest);
-
-        Venda vendaPersistida = getVendaById(vendaController.getVendas(), vendaTest.getIdVenda());
-        assertNotNull(vendaPersistida);
-
-        float novoValorPago = 20.0f;
-        vendaPersistida.setValorPago(novoValorPago);
-
-        vendaController.atualizarVendaNoBanco(vendaPersistida);
-
-        Venda vendaAtualizada = getVendaById(vendaController.getVendas(), vendaTest.getIdVenda());
-        assertEquals(novoValorPago, vendaAtualizada.getValorPago(), 0.001);
-    }
-
-    private Venda getVendaById(ArrayList<Venda> listaVenda, int id) {
-        for (Venda venda : listaVenda) {
-            if (venda.getIdVenda() == id) {
-                return venda;
-            }
-        }
-        return null;
-    }
-
-    public void limparBancoDados() {
-        Connection conexao = new DAOConexaoDB().getConexao();
         String[] tabelas = {"tb_venda_item", "tb_venda", "tb_produto", "tb_cliente"};
         try {
-            PreparedStatement disableFK = conexao.prepareStatement("SET FOREIGN_KEY_CHECKS = 0");
+            // Desativar as verificações de chave estrangeira
+            PreparedStatement disableFK = connection.prepareStatement("SET FOREIGN_KEY_CHECKS = 0");
             disableFK.executeUpdate();
             disableFK.close();
 
             for (String tabela : tabelas) {
-                PreparedStatement pst = conexao.prepareStatement("DELETE FROM " + tabela);
+                PreparedStatement pst = connection.prepareStatement("DELETE FROM " + tabela);
                 pst.executeUpdate();
                 pst.close();
             }
 
-            PreparedStatement enableFK = conexao.prepareStatement("SET FOREIGN_KEY_CHECKS = 1");
+            // Reativar as verificações de chave estrangeira
+            PreparedStatement enableFK = connection.prepareStatement("SET FOREIGN_KEY_CHECKS = 1");
             enableFK.executeUpdate();
             enableFK.close();
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao limpar banco de dados: " + e.getMessage(), e);
+        } finally {
+            // Fechar conexao geral
+            connection.close();
+            conexaoDB.close();
         }
     }
+
+    @Test
+    public void TesteParaInserirBancoTest() {
+        
+        // Inserir venda
+        controllerVenda.persistirBanco(venda);
+
+        // Verificar venda
+        Venda result = getVendaById(controllerVenda.getVendas(), venda.getIdVenda());
+        
+        // Verificar informacoes 
+        assertEquals(venda.getCliente().getNome(), result.getCliente().getNome());
+        assertEquals(venda.getValorPago(), result.getValorPago(), 0.001);
+        assertEquals(venda.getTotalVendaLiquida(), result.getTotalVendaLiquida(), 0.001);
+        System.out.println("TesteParaInserirBancoTest: OK");
+    }
+
+    @Test
+    public void TesteParaSimularBancoVazioTest() {
+        
+        // Simular lista vazia
+        ArrayList<Venda> vendas = controllerVenda.getVendas();
+        assertTrue(vendas.isEmpty());
+        System.out.println("TesteParaSimularBancoVazioTest: OK");
+    }
+
+    @Test
+    public void TesteParaPegarListaPopuladaTeste() {
+        
+        // Inserir vendas para teste
+        controllerVenda.persistirBanco(venda);
+        controllerVenda.persistirBanco(new Venda(10, new java.util.Date(), new ClientePF(), 10.0f, 20.0f));
+
+        ArrayList<Venda> vendas = controllerVenda.getVendas();
+        // Lista não vazia
+        assertFalse(vendas.isEmpty()); 
+        // Duas vendas na lista
+        assertEquals(2, vendas.size()); 
+        System.out.println("TesteParaPegarListaPopuladaTeste: OK");
+    }
 }
-*/
