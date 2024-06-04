@@ -1,8 +1,11 @@
+
 import Controller.ControllerCliente;
 import Model.Cliente;
 import Model.ClientePF;
 import Model.ClientePJ;
-import java.util.Calendar;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.junit.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -11,51 +14,65 @@ import static org.junit.Assert.assertNull;
 /**
  *
  * @author vinicius
- */
+*/ 
 public class TesteCliente {
+    
+    
     private ClientePF pessoa;
     private ClientePJ empresa;
     private ControllerCliente cliente;
-
+            
     @Before
     public void setUp() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2002, Calendar.MAY, 28);
+    String dataString = "1990-12-28"; 
+    String dataString2 = "1910-03-10"; 
 
-        pessoa = new ClientePF(1, calendar.getTime(), "ClienteP", "12345678912", 123456789);
-        empresa = new ClientePJ(2, calendar.getTime(), "ClienteE", "1223456300189", 987654321);
-        cliente = new ControllerCliente();
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd"); 
+    Date dataNascimento = null;
+    Date dataFundacao = null;
 
-        // Insere o cliente para garantir que ele existirá nos outros testes
-        cliente.persistirBanco(pessoa, true, false, false);
-        cliente.persistirBanco(empresa, true, false, false);
+    try {
+        dataNascimento = formatter.parse(dataString); 
+        dataFundacao = formatter.parse(dataString2);
+    } catch (ParseException e) {
+        e.printStackTrace();
+        
     }
 
-    @Test
-    public void testPersistirBancoInsercaoPF() {
+    pessoa = new ClientePF(10, dataNascimento, "Teste Pessoa", "99999999999", 111111111);
+    empresa = new ClientePJ(20, dataFundacao, "Teste Empresa", "88888888888888", 000000000);
+    cliente = new ControllerCliente();
 
+}
+    
+      @Test
+    public void testeInsercaoClientePF() {
         // Buscar o cliente do banco para verificar se foi inserido corretamente
         Cliente result = cliente.getCliente(pessoa.getIdCliente());
 
         // Verificar se os dados do cliente são os esperados
+        assertNotNull("Cliente PF não encontrado no banco de dados.", result);
         assertEquals(pessoa.getNome(), result.getNome());
         assertEquals(pessoa.getCPF(), ((ClientePF) result).getCPF());
         assertEquals(pessoa.getIdentidade(), ((ClientePF) result).getIdentidade());
+        System.out.println("testeInsercaoClientePF: OK");
     }
 
     @Test
-    public void testPersistirBancoInsercaoPJ() {
+    public void testeInsercaoClientePJ() {
         // Buscar o cliente do banco para verificar se foi inserido corretamente
         Cliente result = cliente.getCliente(empresa.getIdCliente());
 
         // Verificar se os dados do cliente são os esperados
+        assertNotNull("Cliente PJ não encontrado no banco de dados.", result);
         assertEquals(empresa.getNome(), result.getNome());
         assertEquals(empresa.getCnpj(), ((ClientePJ) result).getCnpj());
         assertEquals(empresa.getInscricaoEstadual(), ((ClientePJ) result).getInscricaoEstadual());
+        System.out.println("testeInsercaoClientePJ: OK");
     }
 
     @Test
-    public void testPersistirBancoAtualizacaoPF() {
+    public void testeAtualizacaoClientePF() {
         pessoa.setNome("Pessoa Teste Atualizada");
         cliente.persistirBanco(pessoa, false, true, false);
 
@@ -63,11 +80,13 @@ public class TesteCliente {
         Cliente result = cliente.getCliente(pessoa.getIdCliente());
 
         // Verificar se os dados do cliente foram atualizados corretamente
+        assertNotNull("Cliente PF não encontrado no banco de dados.", result);
         assertEquals(pessoa.getNome(), result.getNome());
+        System.out.println("testeAtualizacaoClientePF: OK");
     }
 
     @Test
-    public void testPersistirBancoAtualizacaoPJ() {
+    public void testeAtualizacaoClientePJ() {
         empresa.setNome("Empresa Teste Atualizada");
         cliente.persistirBanco(empresa, false, true, false);
 
@@ -75,11 +94,13 @@ public class TesteCliente {
         Cliente result = cliente.getCliente(empresa.getIdCliente());
 
         // Verificar se os dados do cliente foram atualizados corretamente
+        assertNotNull("Cliente PJ não encontrado no banco de dados.", result);
         assertEquals(empresa.getNome(), result.getNome());
+        System.out.println("testeAtualizacaoClientePJ: OK");
     }
 
     @Test
-    public void testPersistirBancoExclusaoPF() {
+    public void testeExclusaoClientePF() {
         cliente.persistirBanco(pessoa, false, false, true);
 
         // Buscar o cliente do banco para verificar se foi excluído corretamente
@@ -87,10 +108,11 @@ public class TesteCliente {
 
         // Verificar se o cliente não existe mais
         assertNull(result);
+        System.out.println("testeExclusaoClientePF: OK");
     }
 
     @Test
-    public void testPersistirBancoExclusaoPJ() {
+    public void testeExclusaoClientePJ() {
         cliente.persistirBanco(empresa, false, false, true);
 
         // Buscar o cliente do banco para verificar se foi excluído corretamente
@@ -98,24 +120,27 @@ public class TesteCliente {
 
         // Verificar se o cliente não existe mais
         assertNull(result);
+        System.out.println("testeExclusaoClientePJ: OK");
     }
 
     @Test
-    public void testObterClientePorIdExistente() {
+    public void testeObterClientePorIdExistente() {
         // Buscar um cliente que existe no banco de dados
         Cliente result = cliente.getCliente(1);
 
         // Verificar se o cliente foi retornado corretamente
         assertNotNull(result);
         assertEquals("Pessoa Teste", result.getNome());
+        System.out.println("testeObterClientePorIdExistente: OK");
     }
 
     @Test
-    public void testObterClientePorIdInexistente() {
+    public void testeObterClientePorIdInexistente() {
         // Buscar um cliente que não existe no banco de dados
         Cliente result = cliente.getCliente(999);
 
         // Verificar se o resultado é nulo
         assertNull(result);
+        System.out.println("testeObterClientePorIdInexistente: OK");
     }
 }
