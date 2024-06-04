@@ -62,7 +62,8 @@ public class DAOProduto {
 
     public void setCodigoBancoProduto(Produto produto) {
         try {
-            PreparedStatement pst = conexao.getConexao().prepareStatement("select id_produto from tb_produto where descricao = ? and valor = ?");
+            String SQL = "select id_produto from tb_produto where descricao = ? and valor = ?";
+            PreparedStatement pst = conexao.getConexao().prepareStatement(SQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setString(1, produto.getDescricao());
             pst.setFloat(2, produto.getValor());
 

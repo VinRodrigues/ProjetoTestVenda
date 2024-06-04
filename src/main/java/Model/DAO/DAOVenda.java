@@ -103,7 +103,7 @@ public class DAOVenda {
                     + " and DESCONTO=" + String.valueOf(venda.getDesconto())
                     + " and VALOR_PAGO=" + String.valueOf(venda.getValorPago())
                     + " and TOTAL_VENDA=" + String.valueOf(venda.getTotalVendaLiquida());
-            PreparedStatement pst = conexao.getConexao().prepareStatement(SQL);
+            PreparedStatement pst = conexao.getConexao().prepareStatement(SQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = pst.executeQuery();
             rs.first();
             venda.setIdVenda(rs.getInt("id_venda"));

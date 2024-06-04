@@ -124,7 +124,7 @@ public class DAOCliente {
                         + " and nome =? "
                         + " and cpf_cnpj = ? "
                         + " and identidade = ?";
-                PreparedStatement pst = conexao.getConexao().prepareStatement(SQL);
+                PreparedStatement pst = conexao.getConexao().prepareStatement(SQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 pst.setDate(1, new java.sql.Date(pf.getData().getTime()));
                 pst.setInt(2, pf.getIdade());
                 pst.setString(3, pf.getNome());
