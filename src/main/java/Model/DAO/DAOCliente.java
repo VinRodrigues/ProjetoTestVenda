@@ -29,7 +29,7 @@ public class DAOCliente {
                 String SQL
                         = "insert into tb_cliente (id_cliente,data,idade,nome,cpf_cnpj,identidade)"
                         + " values (0,?,?,?,?,?)";
-                PreparedStatement pst = conexao.getConexao().prepareStatement(SQL);
+                PreparedStatement pst = conexao.getConexao().prepareStatement(SQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 pst.setDate(1, new java.sql.Date(pf.getData().getTime()));
                 pst.setInt(2, pf.getIdade());
                 pst.setString(3, pf.getNome());
@@ -45,7 +45,7 @@ public class DAOCliente {
                 String SQL
                         = "insert into tb_cliente (id_cliente,nome,cpf_cnpj,inscricao_estadual,data,idade)"
                         + " values (0,?,?,?,?,?)";
-                PreparedStatement pst = conexao.getConexao().prepareStatement(SQL);
+               PreparedStatement pst = conexao.getConexao().prepareStatement(SQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 pst.setString(1, pj.getNome());
                 pst.setString(2, pj.getCnpj());
                 pst.setInt(3, pj.getInscricaoEstadual());
@@ -68,7 +68,7 @@ public class DAOCliente {
                 String SQL = "update tb_cliente "
                         + "set data = ?,idade=?,nome=?,cpf_cnpj=?,identidade=?"
                         + " where id_cliente = ?";
-                PreparedStatement pst = conexao.getConexao().prepareStatement(SQL);
+                PreparedStatement pst = conexao.getConexao().prepareStatement(SQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 pst.setDate(1, new java.sql.Date(pf.getData().getTime()));
                 pst.setInt(2, pf.getIdade());
                 pst.setString(3, pf.getNome());
@@ -85,7 +85,7 @@ public class DAOCliente {
                 String SQL = "update tb_cliente "
                         + "set nome=?,cpf_cnpj=?,inscricao_estadual=?,idade=?,data = ? "
                         + " where id_cliente = ?";
-                PreparedStatement pst = conexao.getConexao().prepareStatement(SQL);
+                PreparedStatement pst = conexao.getConexao().prepareStatement(SQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 pst.setString(1, pj.getNome());
                 pst.setString(2, pj.getCnpj());
                 pst.setInt(3, pj.getInscricaoEstadual());
@@ -151,7 +151,7 @@ public class DAOCliente {
                         + " and inscricao_estadual = ? "
                         + " and idade = ? "
                         + " and data = ?";
-                PreparedStatement pst = conexao.getConexao().prepareStatement(SQL);
+                PreparedStatement pst = conexao.getConexao().prepareStatement(SQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 pst.setString(1, pj.getNome());
                 pst.setString(2, pj.getCnpj());
                 pst.setInt(3, pj.getInscricaoEstadual());
