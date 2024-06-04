@@ -16,7 +16,7 @@ private Produto produto;
 private ControllerProduto controllerProduto;
 
 
-@BeforeEach
+@Before
 public void setUp(){
     // Criação do novo produto de teste
     produto = new Produto(5, "Produto Teste", (float)6.0);
