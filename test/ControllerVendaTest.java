@@ -25,6 +25,8 @@ public class ControllerVendaTest {
     private Venda venda;
     private ControllerProduto produtoController;
     private ControllerCliente clienteController;
+    private Date dataNascimento;
+    private ClientePF clientePF;
 
     @Before
     public void setUp() throws SQLException {
@@ -39,8 +41,8 @@ public class ControllerVendaTest {
          // Criando informações necessárias para funcionamento do teste
         Calendar calendar = Calendar.getInstance();
         calendar.set(2001, Calendar.JUNE, 21);
-        Date dataNascimento = calendar.getTime();
-        ClientePF clientePF = new ClientePF(9, dataNascimento, "Pessoa Teste", "22119051052", 109283745);
+        dataNascimento = calendar.getTime();
+        clientePF = new ClientePF(9, dataNascimento, "Pessoa Teste", "22119051052", 109283745);
         clienteController.persistirBanco(clientePF, true, false, false);
 
         Produto produto = new Produto(5, "Produto Teste", (float) 3.0);
