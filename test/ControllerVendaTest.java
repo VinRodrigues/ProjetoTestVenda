@@ -97,7 +97,7 @@ public class ControllerVendaTest {
     }
     
     // getVendaByID para auxiliar testes que necessitam
-        public static Venda getVendaById(ArrayList<Venda> listaVenda, int id) {
+    public static Venda getVendaById(ArrayList<Venda> listaVenda, int id) {
         for (Venda venda : listaVenda) {
             if (venda.getIdVenda() == id) {
                 return venda;
@@ -107,30 +107,38 @@ public class ControllerVendaTest {
     }
     
     private void limparBD() throws SQLException {
-        
         DAOConexaoDB conexaoDB = new DAOConexaoDB();
-        Connection connection = conexaoDB.getConexao();
+        Connection connection = null;
+        PreparedStatement disableFK = null;
+        PreparedStatement pst = null;
 
-        String[] tabelas = {"tb_venda_item", "tb_venda", "tb_produto", "tb_cliente"};
         try {
+            connection = conexaoDB.getConexao();
+        
             // Desativar as verificações de chave estrangeira
-            PreparedStatement disableFK = connection.prepareStatement("SET FOREIGN_KEY_CHECKS = 0");
+            disableFK = connection.prepareStatement("SET FOREIGN_KEY_CHECKS = 0");
             disableFK.executeUpdate();
-            disableFK.close();
 
+            String[] tabelas = {"tb_venda_item", "tb_venda", "tb_produto", "tb_cliente"};
             for (String tabela : tabelas) {
-                PreparedStatement pst = connection.prepareStatement("DELETE FROM " + tabela);
+                pst = connection.prepareStatement("DELETE FROM " + tabela);
                 pst.executeUpdate();
-                pst.close();
             }
 
             // Reativar as verificações de chave estrangeira
             PreparedStatement enableFK = connection.prepareStatement("SET FOREIGN_KEY_CHECKS = 1");
             enableFK.executeUpdate();
-            enableFK.close();
-        } finally {
-            // Fechar conexao geral
-            connection.close();
+            } finally {
+            // Fechar recursos em um bloco finally para garantir que sejam fechados mesmo se ocorrer uma exceção
+            if (disableFK != null) {
+                disableFK.close();
+            }
+            if (pst != null) {
+                pst.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
             conexaoDB.close();
         }
     }
