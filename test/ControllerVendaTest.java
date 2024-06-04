@@ -51,8 +51,6 @@ public class ControllerVendaTest {
 
         venda = new Venda(5, calendar.getTime(), clientePF, (float) 2.0, (float) 10.0);
         venda.adicionaItem(vendaItem);
-        
-        TesteParaPegarListaPopuladaTeste(dataNascimento, clientePF);
     
     }
 
@@ -82,11 +80,11 @@ public class ControllerVendaTest {
     }
 
     @Test
-    public void TesteParaPegarListaPopuladaTeste(Date dataNascimento, ClientePF clientePF) {
+    public void TesteParaPegarListaPopuladaTeste() {
         
         // Inserir vendas para teste
         controllerVenda.persistirBanco(venda);
-        controllerVenda.persistirBanco(new Venda(10, dataNascimento, clientePF, 10.0f, 20.0f));
+        controllerVenda.persistirBanco(new Venda(10, this.dataNascimento, this.clientePF, 10.0f, 20.0f));
 
         ArrayList<Venda> vendas = controllerVenda.getVendas();
         // Lista não vazia
