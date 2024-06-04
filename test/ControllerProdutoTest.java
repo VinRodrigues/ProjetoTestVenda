@@ -25,7 +25,7 @@ public void setUp(){
 }
 
 @Test
-public void persistirBancoInsertTest(){
+public void TesteParaInserirBancoTest(){
 
     // Inserir o produto no banco
     controllerProduto.persistirBanco(produto, true, false, false);
@@ -36,10 +36,11 @@ public void persistirBancoInsertTest(){
     // Verificar se os dados estao corretos
     assertEquals(produto.getDescricao(), result.getDescricao());
     assertEquals(produto.getValor(), result.getValor(), 0.001);
+    System.out.println("TesteParaInserirBancoTest: OK");
 }
 
 @Test
-public void persistirBancoUpdateTest(){
+public void TesteParaAtualizarBancoTest(){
 
     // Atualizar a descrição do produto
     produto.setDescricao("Descricao Update");
@@ -53,10 +54,11 @@ public void persistirBancoUpdateTest(){
     // Verificar se os dados estao corretos
     assertNotNull(result);
     assertEquals(produto.getDescricao(), result.getDescricao());
+    System.out.println("TesteParaAtualizarBancoTest: OK");
 }
 
 @Test
-public void persistirBancoDeleteTest(){
+public void TesteParaExcluirBancoTest(){
 
         // Excluir o produto do banco
         controllerProduto.persistirBanco(produto, false, false, true);
@@ -66,23 +68,18 @@ public void persistirBancoDeleteTest(){
 
         // Verificar se o produto não existe mais
         assertNull(result);
+        System.out.println("TesteParaExcluirBancoTest: OK");
 }
 
 //Testes de casos de borda:
 
 @Test
-public void testGetProdutoIdInexistente() {
+public void TesteParaBuscarInexistenteTest() {
   
     // Buscar produto com id inexistente
     Produto result = controllerProduto.getProduto(9999); 
     assertNull(result);
+    System.out.println("TesteParaBuscarInexistente: OK");
 }
-/*
-@Test
-public void testPersistirBancoFlagsInvalidas() {
-    // Enviar flags inválidas
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> controllerProduto.persistirBanco(produto, true, true, true));
-    assertEquals("Flags inválidas!", exception.getMessage());
-}
-*/
+
 }
