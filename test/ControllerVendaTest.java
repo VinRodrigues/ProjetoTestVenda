@@ -51,6 +51,9 @@ public class ControllerVendaTest {
 
         venda = new Venda(5, calendar.getTime(), clientePF, (float) 2.0, (float) 10.0);
         venda.adicionaItem(vendaItem);
+        
+        TesteParaPegarListaPopuladaTeste(dataNascimento, clientePF);
+    
     }
 
     @Test
@@ -79,7 +82,7 @@ public class ControllerVendaTest {
     }
 
     @Test
-    public void TesteParaPegarListaPopuladaTeste() {
+    public void TesteParaPegarListaPopuladaTeste(Date dataNascimento, ClientePF clientePF) {
         
         // Inserir vendas para teste
         controllerVenda.persistirBanco(venda);
