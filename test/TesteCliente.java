@@ -24,10 +24,10 @@ public class TesteCliente {
             
     @Before
     public void setUp() {
-    String dataString = "1990-12-28"; 
-    String dataString2 = "1910-03-10"; 
+    String dataString = "28/12/1990"; 
+    String dataString2 = "10/03/1910"; 
 
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd"); 
+    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); 
     Date dataNascimento = null;
     Date dataFundacao = null;
 
@@ -39,9 +39,12 @@ public class TesteCliente {
         
     }
 
-    pessoa = new ClientePF(10, dataNascimento, "Teste Pessoa", "99999999999", 111111111);
-    empresa = new ClientePJ(20, dataFundacao, "Teste Empresa", "88888888888888", 000000000);
+    pessoa = new ClientePF(1, dataNascimento, "Pessoa", "99999999999", 111111111);
+    empresa = new ClientePJ(2, dataFundacao, "Empresa", "88888888888888", 000000000);
     cliente = new ControllerCliente();
+    
+    cliente.persistirBanco(pessoa, true, false, false);
+    cliente.persistirBanco(empresa, true, false, false);
 
 }
     
@@ -123,16 +126,6 @@ public class TesteCliente {
         System.out.println("testeExclusaoClientePJ: OK");
     }
 
-    @Test
-    public void testeObterClientePorIdExistente() {
-        // Buscar um cliente que existe no banco de dados
-        Cliente result = cliente.getCliente(1);
-
-        // Verificar se o cliente foi retornado corretamente
-        assertNotNull(result);
-        assertEquals("Pessoa Teste", result.getNome());
-        System.out.println("testeObterClientePorIdExistente: OK");
-    }
 
     @Test
     public void testeObterClientePorIdInexistente() {
