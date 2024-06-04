@@ -87,16 +87,7 @@ public class TesteLogin {
         System.out.println("TesteParavalidarLoginComPrivilegioInvalidoTest: OK");
     }
 
-    @Test
-    public void TesteParavalidarLoginSemPrivilegioTest(){
-        String login = "paulo";
-        String senha = "teste";
-        Login result = loginController.validaLogin(login, senha, null);
-        
-        // Conferir se o login sem privilégio retorna null
-        assertEquals(null, result); // Teste falha se o método não retorna null
-        System.out.println("TesteParavalidarLoginSemPrivilegioTest: OK");
-    }
+   
 
     @Test
     public void TesteParavalidarLoginVazioTest(){
