@@ -20,7 +20,7 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost -u root -psenha100 --silent"
+          --health-cmd="mysqladmin ping -h localhost -u root -psenha230600 --silent"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
@@ -51,7 +51,7 @@ jobs:
 
     - name: Set up database
       run: |
-        mysql -h "127.0.0.1" -u root -psenha100 db_venda < Script_BD_venda.sql
+        mysql -h "127.0.0.1" -u root -psenha230600 db_venda < Script_BD_venda.sql
 
     - name: Compile and test
       run: |
