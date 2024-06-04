@@ -10,7 +10,8 @@ import org.junit.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 /**
  *
@@ -26,6 +27,10 @@ public class ControllerVendaTest {
 
     @Before
     public void setUp() throws SQLException {
+        
+        controllerVenda = new ControllerVenda();
+        produtoController = new ControllerProduto();
+        clienteController = new ControllerCliente();
         
         // Limpar banco antes de cada teste
         limparBD();
@@ -44,35 +49,6 @@ public class ControllerVendaTest {
 
         venda = new Venda(5, calendar.getTime(), clientePF, (float) 2.0, (float) 10.0);
         venda.adicionaItem(vendaItem);
-    }
-
-    private void limparBD() throws SQLException {
-        
-        DAOConexaoDB conexaoDB = new DAOConexaoDB();
-        Connection connection = conexaoDB.getConexao();
-
-        String[] tabelas = {"tb_venda_item", "tb_venda", "tb_produto", "tb_cliente"};
-        try {
-            // Desativar as verificações de chave estrangeira
-            PreparedStatement disableFK = connection.prepareStatement("SET FOREIGN_KEY_CHECKS = 0");
-            disableFK.executeUpdate();
-            disableFK.close();
-
-            for (String tabela : tabelas) {
-                PreparedStatement pst = connection.prepareStatement("DELETE FROM " + tabela);
-                pst.executeUpdate();
-                pst.close();
-            }
-
-            // Reativar as verificações de chave estrangeira
-            PreparedStatement enableFK = connection.prepareStatement("SET FOREIGN_KEY_CHECKS = 1");
-            enableFK.executeUpdate();
-            enableFK.close();
-        } finally {
-            // Fechar conexao geral
-            connection.close();
-            conexaoDB.close();
-        }
     }
 
     @Test
@@ -113,5 +89,44 @@ public class ControllerVendaTest {
         // Duas vendas na lista
         assertEquals(2, vendas.size()); 
         System.out.println("TesteParaPegarListaPopuladaTeste: OK");
+    }
+    
+    // getVendaByID para auxiliar testes que necessitam
+        public static Venda getVendaById(ArrayList<Venda> listaVenda, int id) {
+        for (Venda venda : listaVenda) {
+            if (venda.getIdVenda() == id) {
+                return venda;
+            }
+        }
+        return null; 
+    }
+    
+    private void limparBD() throws SQLException {
+        
+        DAOConexaoDB conexaoDB = new DAOConexaoDB();
+        Connection connection = conexaoDB.getConexao();
+
+        String[] tabelas = {"tb_venda_item", "tb_venda", "tb_produto", "tb_cliente"};
+        try {
+            // Desativar as verificações de chave estrangeira
+            PreparedStatement disableFK = connection.prepareStatement("SET FOREIGN_KEY_CHECKS = 0");
+            disableFK.executeUpdate();
+            disableFK.close();
+
+            for (String tabela : tabelas) {
+                PreparedStatement pst = connection.prepareStatement("DELETE FROM " + tabela);
+                pst.executeUpdate();
+                pst.close();
+            }
+
+            // Reativar as verificações de chave estrangeira
+            PreparedStatement enableFK = connection.prepareStatement("SET FOREIGN_KEY_CHECKS = 1");
+            enableFK.executeUpdate();
+            enableFK.close();
+        } finally {
+            // Fechar conexao geral
+            connection.close();
+            conexaoDB.close();
+        }
     }
 }
