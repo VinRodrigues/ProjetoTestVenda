@@ -8,17 +8,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import org.junit.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 /**
  *
  * @author ian21
  */
-
 public class ControllerVendaTest {
 
     private ControllerVenda controllerVenda;
@@ -30,15 +25,14 @@ public class ControllerVendaTest {
 
     @Before
     public void setUp() throws SQLException {
-        
         controllerVenda = new ControllerVenda();
         produtoController = new ControllerProduto();
         clienteController = new ControllerCliente();
-        
+
         // Limpar banco antes de cada teste
         limparBD();
 
-         // Criando informações necessárias para funcionamento do teste
+        // Criando informações necessárias para funcionamento do teste
         Calendar calendar = Calendar.getInstance();
         calendar.set(2001, Calendar.JUNE, 21);
         dataNascimento = calendar.getTime();
@@ -53,19 +47,18 @@ public class ControllerVendaTest {
 
         venda = new Venda(5, calendar.getTime(), clientePF, (float) 2.0, (float) 10.0);
         venda.adicionaItem(vendaItem);
-    
     }
 
     @Test
     public void TesteParaInserirBancoTest() {
-        
         // Inserir venda
         controllerVenda.persistirBanco(venda);
 
         // Verificar venda
         Venda result = getVendaById(controllerVenda.getVendas(), venda.getIdVenda());
-        
-        // Verificar informacoes 
+
+        // Verificar informações
+        assertNotNull("Venda não encontrada no banco de dados.", result);
         assertEquals(venda.getCliente().getNome(), result.getCliente().getNome());
         assertEquals(venda.getValorPago(), result.getValorPago(), 0.001);
         assertEquals(venda.getTotalVendaLiquida(), result.getTotalVendaLiquida(), 0.001);
@@ -73,39 +66,41 @@ public class ControllerVendaTest {
     }
 
     @Test
-    public void TesteParaSimularBancoVazioTest() {
+    public void TesteParaSimularBancoVazioTest() throws SQLException {
+        // Limpar banco antes do teste
+        limparBD();
         
         // Simular lista vazia
         ArrayList<Venda> vendas = controllerVenda.getVendas();
-        assertTrue(vendas.isEmpty());
+        assertTrue("A lista de vendas deveria estar vazia.", vendas.isEmpty());
         System.out.println("TesteParaSimularBancoVazioTest: OK");
     }
 
     @Test
     public void TesteParaPegarListaPopuladaTeste() {
-        
         // Inserir vendas para teste
         controllerVenda.persistirBanco(venda);
         controllerVenda.persistirBanco(new Venda(10, dataNascimento, clientePF, 10.0f, 20.0f));
 
         ArrayList<Venda> vendas = controllerVenda.getVendas();
         // Lista não vazia
-        assertFalse(vendas.isEmpty()); 
+        assertFalse("A lista de vendas não deveria estar vazia.", vendas.isEmpty());
         // Duas vendas na lista
-        assertEquals(2, vendas.size()); 
+        assertEquals("A lista de vendas deveria ter 2 itens.", 2, vendas.size());
         System.out.println("TesteParaPegarListaPopuladaTeste: OK");
     }
-    
-    // getVendaByID para auxiliar testes que necessitam
+
+    // Método auxiliar getVendaById
     public static Venda getVendaById(ArrayList<Venda> listaVenda, int id) {
         for (Venda venda : listaVenda) {
             if (venda.getIdVenda() == id) {
                 return venda;
             }
         }
-        return null; 
+        return null;
     }
-    
+
+    // Método auxiliar para limpar o banco de dados
     private void limparBD() throws SQLException {
         DAOConexaoDB conexaoDB = new DAOConexaoDB();
         Connection connection = null;
@@ -114,7 +109,7 @@ public class ControllerVendaTest {
 
         try {
             connection = conexaoDB.getConexao();
-        
+
             // Desativar as verificações de chave estrangeira
             disableFK = connection.prepareStatement("SET FOREIGN_KEY_CHECKS = 0");
             disableFK.executeUpdate();
@@ -128,7 +123,7 @@ public class ControllerVendaTest {
             // Reativar as verificações de chave estrangeira
             PreparedStatement enableFK = connection.prepareStatement("SET FOREIGN_KEY_CHECKS = 1");
             enableFK.executeUpdate();
-            } finally {
+        } finally {
             // Fechar recursos em um bloco finally para garantir que sejam fechados mesmo se ocorrer uma exceção
             if (disableFK != null) {
                 disableFK.close();
